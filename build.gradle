@@ -1,0 +1,33 @@
+group 'nl.lang2619'
+version '1.0'
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'maven'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12' //JUnit
+    // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
+    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
+}
+
+jar {
+    manifest {
+        attributes('Title': "Fantasy Grounds DLC Updater",
+                   'Version': version,
+                   'Main-Class': 'nl.lang2619.DLCUpdater.Main')
+    }
+    baseName = 'DLCUpdater'
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
