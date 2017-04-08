@@ -23,7 +23,7 @@ public class Main {
   private static File file = new File("DLC_List.txt");
   private static List<String> knownDLC = new ArrayList<>();
   private static List<String> newKnownDLC = new ArrayList<>();
-  private static int known = 0;
+  private static int count = 0;
 
   public static void main(String[] args) {
     readFile();
@@ -36,7 +36,7 @@ public class Main {
       BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
       for (String aNewKnownDLC : newKnownDLC) {
         writer.newLine();
-        writer.write(aNewKnownDLC + "\n");
+        writer.write(aNewKnownDLC);
       }
       writer.close();
     } catch (IOException e) {
@@ -45,7 +45,6 @@ public class Main {
   }
 
   private static void getDLC() {
-    int count = 0;
     JSONArray dlc = (JSONArray) getData("252690").get("dlc");
     for (Object aDlc : dlc) {
       String dlcId = String.valueOf(aDlc);
@@ -57,14 +56,14 @@ public class Main {
           break;
         }
         if (newDLC.get("type").equals("dlc")) {
-          System.out.format("New DLC: %s %s\n", newDLC.get("steam_appid"), newDLC.get("name"));
           count += 1;
           newKnownDLC.add(newDLC.get("steam_appid") + " " + newDLC.get("name"));
+          System.out.format("New DLC: %s %s\n", newDLC.get("steam_appid"), newDLC.get("name"));
         }
       }
     }
     System.out.println("# New DLC: " + count);
-    System.out.println("# Total DLC: " + (count + known));
+    System.out.println("# Total DLC: " + (count + knownDLC.size()));
   }
 
   private static JSONObject getData(String id) {
@@ -82,7 +81,6 @@ public class Main {
     } catch (Exception e) {
       System.out.println("Temporarily blocked from steam API, try again later.");
     }
-    System.out.println("Temporarily blocked from steam API, try again later.");
     return null;
   }
 
@@ -92,22 +90,21 @@ public class Main {
       String line;
       while ((line = input.readLine()) != null) {
         if (!line.startsWith("#")) {
-          known++;
           String[] linesplit = line.split(" ");
           String dlc = linesplit[0];
           knownDLC.add(dlc);
         }
       }
-      System.out.println("# Known DLC: " + known);
+      System.out.println("# Known DLC: " + knownDLC.size());
     } catch (IOException e) {
       try {
         file.createNewFile();
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-        writer.write("# Add DLC here, Format is \"APPID App Name\" APPID MUST be a valid APPID\n");
+        writer.write("# Add DLC here, Format is \"APPID App Name\" APPID MUST be a valid APPID");
         writer.newLine();
-        writer.write("# See the following website for a complete list:\n");
+        writer.write("# See the following website for a complete list:");
         writer.newLine();
-        writer.write("# https://steamdb.info/app/252690/dlc/\n");
+        writer.write("# https://steamdb.info/app/252690/dlc/");
         writer.newLine();
         writer.write("#");
         writer.close();
